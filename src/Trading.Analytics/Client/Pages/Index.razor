@@ -4,17 +4,19 @@
 
 <h1>Активы</h1>
 
-<div>
     <SfChart Title="Portfolio Progress">
-        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
-
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime">
+        </ChartPrimaryXAxis>
         <ChartSeriesCollection>
-            <ChartSeries DataSource="@portfolioSteps" XName="Date" YName="Balance" Type="ChartSeriesType.StepLine">
+            <ChartSeries DataSource="@portfolioSteps" XName="Date" YName="Balance" Width="3" Opacity="1" Fill="blue" Type="ChartSeriesType.Line">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true"> </ChartDataLabel>
+                </ChartMarker>
             </ChartSeries>
         </ChartSeriesCollection>
     </SfChart>
 
-    <SfChart Title="RUB">
+    <SfChart>
         <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
         </ChartPrimaryXAxis>
         <ChartPrimaryYAxis Title="Cost">
@@ -34,17 +36,6 @@
                     <ChartDataLabel Visible="true"> </ChartDataLabel>
                 </ChartMarker>
             </ChartSeries>
-        </ChartSeriesCollection>
-    </SfChart>
-
-    <SfChart Title="USD">
-        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
-        </ChartPrimaryXAxis>
-        <ChartPrimaryYAxis Title="Cost">
-        </ChartPrimaryYAxis>
-        <ChartLegendSettings Visible="true"> </ChartLegendSettings>
-        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
-        <ChartSeriesCollection>
             <ChartSeries Type="ChartSeriesType.Column" DataSource="@assetsUsd"
                          XName="Ticker" YName="Balance" Name="USD Assets">
                 <ChartMarker>
@@ -59,21 +50,35 @@
             </ChartSeries>
         </ChartSeriesCollection>
     </SfChart>
-</div>
+
+    <SfChart Title="Portfolio Progress">
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime">
+        </ChartPrimaryXAxis>
+        <ChartSeriesCollection>
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@operations" Fill="green" XName="Date" YName="Payment">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Name="Currency"> </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+    </SfChart>
 
 @code {
 
     private IEnumerable<PortfolioStep> portfolioSteps;
+    private IEnumerable<Analytics.Shared.Models.Operations.Operation> operations;
     private IEnumerable<Asset> assetsRub;
     private IEnumerable<Asset> assetsUsd;
 
     protected override async Task OnInitializedAsync()
     {
-        portfolioSteps = await Http.GetJsonAsync<IEnumerable<PortfolioStep>>("api/PortfolioSteps");
         var assets = await Http.GetJsonAsync<IEnumerable<Asset>>("api/Positions");
         var enumerable = assets.ToList();
         assetsRub = enumerable.Where(asset => asset.Сurrency.Equals("RUB")).OrderBy(stock => stock.Profit).ToList();
         assetsUsd = enumerable.Where(asset => asset.Сurrency.Equals("USD")).OrderBy(stock => stock.Profit).ToList();
+        portfolioSteps = await Http.GetJsonAsync<IEnumerable<PortfolioStep>>("api/PortfolioSteps");
+        var o = await Http.GetJsonAsync<IEnumerable<Analytics.Shared.Models.Operations.Operation>>("api/Operations");
+        operations = o.Where(operation => operation.OperationType.Equals("PayIn") && operation.Status.Equals("Done"));
     }
 
 }

@@ -62,7 +62,7 @@ namespace Trading.Analytics.Server.Services
                         {
                             Position = await context.Positions.FirstAsync(position => position.Ticker.Equals(p.Ticker)),
                             Count = Convert.ToInt32(p.Balance),
-                            Value = p.AveragePositionPrice.Value * p.Balance + p.ExpectedYield.Value
+                            Value = p.AveragePositionPrice.Value + (p.ExpectedYield.Value / p.Balance)
                         });
                     }
 

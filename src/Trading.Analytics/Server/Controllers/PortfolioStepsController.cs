@@ -23,7 +23,7 @@ namespace Trading.Analytics.Server.Controllers
         public async Task<IEnumerable<PortfolioStep>> Get()
         {
             return await context.PortfolioSnapshots
-                .Select(snapshot => new PortfolioStep {Date = snapshot.DateTime, Balance = snapshot.TotalPriceRub})
+                .Select(snapshot => new PortfolioStep {Date = snapshot.DateTime, Balance = Math.Round(snapshot.TotalPriceRub)})
                 .ToListAsync();
         }
     }

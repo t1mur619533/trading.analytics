@@ -11,10 +11,8 @@ namespace Trading.Analytics.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
-
             builder.Services.AddBaseAddressHttpClient();
             builder.Services.AddSyncfusionBlazor();
-
             await builder.Build().RunAsync();
         }
     }

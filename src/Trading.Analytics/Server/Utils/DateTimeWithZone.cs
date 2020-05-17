@@ -14,16 +14,19 @@ namespace Trading.Analytics.Server.Utils
             this.timeZone = timeZone;
         }
 
-        public DateTime UniversalTime { get { return utcDateTime; } }
+        public DateTime UniversalTime
+        {
+            get { return utcDateTime; }
+        }
 
-        public TimeZoneInfo TimeZone { get { return timeZone; } }
+        public TimeZoneInfo TimeZone
+        {
+            get { return timeZone; }
+        }
 
         public DateTime LocalTime
         {
-            get
-            {
-                return TimeZoneInfo.ConvertTime(utcDateTime, timeZone);
-            }
+            get { return TimeZoneInfo.ConvertTime(utcDateTime, timeZone); }
         }
     }
 }

@@ -17,11 +17,5 @@
     <ProjectReference Include="..\Shared\Trading.Analytics.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Tinkoff.Trading.OpenApi">
-      <HintPath>external\Tinkoff.Trading.OpenApi.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 
 </Project>

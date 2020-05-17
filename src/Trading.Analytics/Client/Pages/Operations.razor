@@ -1,0 +1,70 @@
+﻿@page "/operations"
+@inject HttpClient Http
+
+<h3>Операции</h3>
+
+@if (operations == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>OperationType</th>
+            <th>Date</th>
+            <th>Currency</th>
+            <th>Figi</th>
+            <th>Status</th>
+            <th>Commission</th>
+            <th>Payment</th>
+            <th>Price</th>
+            <th>Trades</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var operation in operations)
+        {
+            <tr>
+                <td>@operation.OperationType</td>
+                <td>@operation.Date</td>
+                <td>@operation.Currency</td>
+                <td>@operation.Figi</td>
+                <td>@operation.Status</td>
+                @if (operation.Commission != null)
+                {
+                    <td>@operation.Commission?.Value @operation.Commission?.Currency</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>@operation.Payment</td>
+                <td>@operation.Price</td>
+                @if (operation.Trades != null)
+                {
+                    @foreach (var trade in operation.Trades)
+                    {
+                        <tr>
+                            <td>@trade.Date / @trade.Price / @trade.Quantity</td>
+                        </tr>
+                    }
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<Analytics.Shared.Models.Operations.Operation> operations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        operations = await Http.GetJsonAsync<IEnumerable<Analytics.Shared.Models.Operations.Operation>>("api/Operations");
+    }
+
+}

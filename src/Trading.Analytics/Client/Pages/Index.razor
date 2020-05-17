@@ -2,6 +2,8 @@
 @using Trading.Analytics.Shared
 @inject HttpClient Http
 
+<h1>Активы</h1>
+
 <div>
     <SfChart Title="RUB">
         <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
@@ -11,13 +13,13 @@
         <ChartLegendSettings Visible="true"> </ChartLegendSettings>
         <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
         <ChartSeriesCollection>
-            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksRub"
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@assetsRub"
                          XName="Ticker" YName="Balance" Name="RUB Assets">
                 <ChartMarker>
                     <ChartDataLabel Visible="true"> </ChartDataLabel>
                 </ChartMarker>
             </ChartSeries>
-            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksRub"
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@assetsRub"
                          XName="Ticker" YName="Profit" Name="Profit">
                 <ChartMarker>
                     <ChartDataLabel Visible="true"> </ChartDataLabel>
@@ -34,13 +36,13 @@
         <ChartLegendSettings Visible="true"> </ChartLegendSettings>
         <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
         <ChartSeriesCollection>
-            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksUsd"
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@assetsUsd"
                          XName="Ticker" YName="Balance" Name="USD Assets">
                 <ChartMarker>
                     <ChartDataLabel Visible="true"> </ChartDataLabel>
                 </ChartMarker>
             </ChartSeries>
-            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksUsd"
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@assetsUsd"
                          XName="Ticker" YName="Profit" Name="Profit">
                 <ChartMarker>
                     <ChartDataLabel Visible="true"> </ChartDataLabel>
@@ -52,14 +54,14 @@
 
 @code {
 
-    private IEnumerable<Asset> stocksRub;
-    private IEnumerable<Asset> stocksUsd;
+    private IEnumerable<Asset> assetsRub;
+    private IEnumerable<Asset> assetsUsd;
 
     protected override async Task OnInitializedAsync()
     {
-        var stocksEnvelope = await Http.GetJsonAsync<List<Asset>>("api/Assets");
-        stocksRub = stocksEnvelope.Where(asset => asset.Сurrency.Equals("Rub")).OrderBy(stock => stock.Profit);
-        stocksUsd = stocksEnvelope.Where(asset => asset.Сurrency.Equals("Usd")).OrderBy(stock => stock.Profit);
+        var assets = await Http.GetJsonAsync<IEnumerable<Asset>>("api/Positions");
+        assetsRub = assets.Where(asset => asset.Сurrency.Equals("RUB")).OrderBy(stock => stock.Profit).ToList();
+        assetsUsd = assets.Where(asset => asset.Сurrency.Equals("USD")).OrderBy(stock => stock.Profit).ToList();
     }
 
 }

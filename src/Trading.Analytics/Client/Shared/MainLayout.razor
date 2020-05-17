@@ -1,14 +1,13 @@
 ﻿@inherits LayoutComponentBase
-@using Trading.Analytics.Shared
 @inject HttpClient Http
 
 <div class="sidebar">
-    <NavMenu />
+    <NavMenu/>
 </div>
 
 <div class="main">
     <div class="top-row px-4">
-        <h1>Profits: @totalRubLabel / @totalUsdLabel</h1>
+        <h1>Profit: @totalRubLabel / @totalUsdLabel</h1>
     </div>
 
     <div class="content px-4">
@@ -23,11 +22,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var stocksEnvelope = await Http.GetJsonAsync<List<Asset>>("api/Assets");
-        var rubProfit = stocksEnvelope.Where(asset => asset.Сurrency.Equals("Rub")).Select(asset => asset.Profit).Sum();
-        totalRubLabel = $"RUB {rubProfit}";
-        var usdProfit = stocksEnvelope.Where(asset => asset.Сurrency.Equals("Usd")).Select(asset => asset.Profit).Sum();
-        totalUsdLabel = $"USD {usdProfit}";
+        
     }
 
 }

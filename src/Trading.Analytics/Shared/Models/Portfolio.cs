@@ -4,7 +4,7 @@ namespace Trading.Analytics.Shared.Models
 {
     public class Portfolio : OpenApiResponse<Portfolio.Envelope>
     {
-        public Portfolio(string trackingId, string status, Portfolio.Envelope payload) : base(trackingId, status,
+        public Portfolio(string trackingId, string status, Envelope payload) : base(trackingId, status,
             payload)
         {
         }

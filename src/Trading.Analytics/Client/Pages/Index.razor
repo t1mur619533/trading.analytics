@@ -5,6 +5,15 @@
 <h1>Активы</h1>
 
 <div>
+    <SfChart Title="Portfolio Progress">
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
+
+        <ChartSeriesCollection>
+            <ChartSeries DataSource="@portfolioSteps" XName="Date" YName="Balance" Type="ChartSeriesType.StepLine">
+            </ChartSeries>
+        </ChartSeriesCollection>
+    </SfChart>
+
     <SfChart Title="RUB">
         <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
         </ChartPrimaryXAxis>
@@ -54,14 +63,17 @@
 
 @code {
 
+    private IEnumerable<PortfolioStep> portfolioSteps;
     private IEnumerable<Asset> assetsRub;
     private IEnumerable<Asset> assetsUsd;
 
     protected override async Task OnInitializedAsync()
     {
+        portfolioSteps = await Http.GetJsonAsync<IEnumerable<PortfolioStep>>("api/PortfolioSteps");
         var assets = await Http.GetJsonAsync<IEnumerable<Asset>>("api/Positions");
-        assetsRub = assets.Where(asset => asset.Сurrency.Equals("RUB")).OrderBy(stock => stock.Profit).ToList();
-        assetsUsd = assets.Where(asset => asset.Сurrency.Equals("USD")).OrderBy(stock => stock.Profit).ToList();
+        var enumerable = assets.ToList();
+        assetsRub = enumerable.Where(asset => asset.Сurrency.Equals("RUB")).OrderBy(stock => stock.Profit).ToList();
+        assetsUsd = enumerable.Where(asset => asset.Сurrency.Equals("USD")).OrderBy(stock => stock.Profit).ToList();
     }
 
 }

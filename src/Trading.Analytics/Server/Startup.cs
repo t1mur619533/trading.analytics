@@ -1,12 +1,17 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Coravel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Trading.Analytics.Domain;
+using Trading.Analytics.Server.Services;
 
 namespace Trading.Analytics.Server
 {
@@ -23,6 +28,8 @@ namespace Trading.Analytics.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<TradingContext>(builder => builder.UseNpgsql(connection));
             services.AddControllers();
             services.AddScoped(provider =>
             {
@@ -43,11 +50,39 @@ namespace Trading.Analytics.Server
                     Description = "API",
                 });
             });
+            services.AddScoped<TradingSnapshotService>();
+            services.AddScheduler();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using var scope = app.ApplicationServices.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
+            try
+            {
+                //todo: В будущем требуется более надежная стратегия развертывания, такая как создание скриптов SQL
+                var dbContext = serviceProvider.GetRequiredService<TradingContext>();
+                dbContext.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the DB.");
+            }
+
+            var provider = app.ApplicationServices;
+            provider.UseScheduler(scheduler =>
+            {
+                scheduler.Schedule<TradingSnapshotService>()
+                    .EveryThirtyMinutes()
+                    .Weekday();
+            }).OnError(exception =>
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(exception.Message);
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

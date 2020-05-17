@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Trading.Analytics.Shared;
 using Trading.Analytics.Shared.Models;
 
@@ -14,12 +13,9 @@ namespace Trading.Analytics.Server.Controllers
     [ApiController]
     public class PositionsController : BaseController<Portfolio>
     {
-        private readonly HttpClient httpClient;
-
-        public PositionsController(HttpClient httpClient, IConfiguration configuration, string endpoint = "portfolio") :
+        public PositionsController(HttpClient httpClient, string endpoint = "portfolio") :
             base(httpClient, endpoint)
         {
-            this.httpClient = httpClient;
         }
 
         [HttpGet]

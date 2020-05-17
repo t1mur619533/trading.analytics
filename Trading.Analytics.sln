@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trading.Analytics.Server", "src\Trading.Analytics\Server\Trading.Analytics.Server.csproj", "{A26EE4A4-DABB-4536-85F2-8E49EBC5FFC8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trading.Analytics.Client", "src\Trading.Analytics\Client\Trading.Analytics.Client.csproj", "{F685FEDD-B10A-4CDB-94BB-F9250C1995BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trading.Analytics.Shared", "src\Trading.Analytics\Shared\Trading.Analytics.Shared.csproj", "{10CDD0F5-D687-42DF-B250-F9F57F731351}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A26EE4A4-DABB-4536-85F2-8E49EBC5FFC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A26EE4A4-DABB-4536-85F2-8E49EBC5FFC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A26EE4A4-DABB-4536-85F2-8E49EBC5FFC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A26EE4A4-DABB-4536-85F2-8E49EBC5FFC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F685FEDD-B10A-4CDB-94BB-F9250C1995BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F685FEDD-B10A-4CDB-94BB-F9250C1995BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F685FEDD-B10A-4CDB-94BB-F9250C1995BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F685FEDD-B10A-4CDB-94BB-F9250C1995BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10CDD0F5-D687-42DF-B250-F9F57F731351}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10CDD0F5-D687-42DF-B250-F9F57F731351}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10CDD0F5-D687-42DF-B250-F9F57F731351}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10CDD0F5-D687-42DF-B250-F9F57F731351}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BE4DB37C-C64D-4E12-80B9-87C370140F54}
+	EndGlobalSection
+EndGlobal

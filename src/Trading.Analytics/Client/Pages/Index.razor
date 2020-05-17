@@ -1,0 +1,65 @@
+﻿@page "/"
+@using Trading.Analytics.Shared
+@inject HttpClient Http
+
+<div>
+    <SfChart Title="RUB">
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis Title="Cost">
+        </ChartPrimaryYAxis>
+        <ChartLegendSettings Visible="true"> </ChartLegendSettings>
+        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+        <ChartSeriesCollection>
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksRub"
+                         XName="Ticker" YName="Balance" Name="RUB Assets">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true"> </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksRub"
+                         XName="Ticker" YName="Profit" Name="Profit">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true"> </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+    </SfChart>
+
+    <SfChart Title="USD">
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis Title="Cost">
+        </ChartPrimaryYAxis>
+        <ChartLegendSettings Visible="true"> </ChartLegendSettings>
+        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+        <ChartSeriesCollection>
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksUsd"
+                         XName="Ticker" YName="Balance" Name="USD Assets">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true"> </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries Type="ChartSeriesType.Column" DataSource="@stocksUsd"
+                         XName="Ticker" YName="Profit" Name="Profit">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true"> </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+    </SfChart>
+</div>
+
+@code {
+
+    private IEnumerable<Asset> stocksRub;
+    private IEnumerable<Asset> stocksUsd;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var stocksEnvelope = await Http.GetJsonAsync<List<Asset>>("api/Assets");
+        stocksRub = stocksEnvelope.Where(asset => asset.Сurrency.Equals("Rub")).OrderBy(stock => stock.Profit);
+        stocksUsd = stocksEnvelope.Where(asset => asset.Сurrency.Equals("Usd")).OrderBy(stock => stock.Profit);
+    }
+
+}

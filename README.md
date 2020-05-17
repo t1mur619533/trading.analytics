@@ -1,1 +1,1 @@
-# trading.analytics
+# Tinkoff trading analytics

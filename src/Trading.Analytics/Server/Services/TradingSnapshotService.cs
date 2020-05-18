@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using Coravel.Invocable;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,13 +19,15 @@ namespace Trading.Analytics.Server.Services
         private readonly TradingContext context;
         private readonly HttpClient httpClient;
         private readonly ILogger<TradingSnapshotService> logger;
+        private readonly CurrentRubPerUsdExchangeRateService rubPerUsdExchangeRateService;
 
         public TradingSnapshotService(HttpClient httpClient, ILogger<TradingSnapshotService> logger,
-            TradingContext context)
+            TradingContext context, CurrentRubPerUsdExchangeRateService rubPerUsdExchangeRateService)
         {
             this.httpClient = httpClient;
             this.logger = logger;
             this.context = context;
+            this.rubPerUsdExchangeRateService = rubPerUsdExchangeRateService;
         }
 
         public async Task Invoke()
@@ -66,7 +67,7 @@ namespace Trading.Analytics.Server.Services
                         });
                     }
 
-                    var rubPerUsd = await RubPerUsd();
+                    var rubPerUsd = await rubPerUsdExchangeRateService.LastHourClosingPrice();
                     if (rubPerUsd > 0)
                     {
                         var portfolioSnapshot = new PortfolioSnapshot
@@ -96,40 +97,6 @@ namespace Trading.Analytics.Server.Services
             {
                 logger.LogError(e.Message);
             }
-        }
-
-        private async Task<double> RubPerUsd()
-        {
-            double rubPerUsd = 0;
-            var now = DateTime.Now;
-            var cd1Hour = now.Hour - 1;
-            if (cd1Hour < 0)
-                cd1Hour = 23;
-            var figiParam = HttpUtility.UrlEncode("BBG0013HGFT4");
-            var from = new DateTimeWithZone(new DateTime(now.Year, now.Month, now.Day, cd1Hour, now.Minute, now.Second),
-                TimeZoneInfo.Local);
-            var to = new DateTimeWithZone(now, TimeZoneInfo.Local);
-            var fromParam = HttpUtility.UrlEncode(@from.LocalTime.ToString("O"));
-            var toParam = HttpUtility.UrlEncode(to.LocalTime.ToString("O"));
-            var query = $"?figi={figiParam}&from={fromParam}&to={toParam}&interval=hour";
-            var response = await httpClient.GetAsync($"market/candles{query}");
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var stringAsync = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var rubPerUsdEnvelope = JsonConvert.DeserializeObject<RubPerUsd>(stringAsync);
-                if (rubPerUsdEnvelope.Payload.Candles.Any())
-                {
-                    rubPerUsd = rubPerUsdEnvelope.Payload.Candles.First().C;
-                }
-            }
-            else
-            {
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    throw new Exception("You have no access to that resource.");
-                throw new Exception("Something went wrong...");
-            }
-
-            return rubPerUsd;
         }
     }
 }

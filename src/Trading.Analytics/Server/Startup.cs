@@ -51,6 +51,7 @@ namespace Trading.Analytics.Server
                 });
             });
             services.AddScoped<TradingSnapshotService>();
+            services.AddScoped<CurrentRubPerUsdExchangeRateService>();
             services.AddScheduler();
         }
 

@@ -7,8 +7,10 @@
 <SfChart Title="Portfolio Progress">
     <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime">
     </ChartPrimaryXAxis>
+    <ChartLegendSettings Visible="true"> </ChartLegendSettings>
+    <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
     <ChartSeriesCollection>
-        <ChartSeries DataSource="@portfolioSteps" XName="Date" YName="Balance" Width="3" Opacity="1" Fill="blue" Type="ChartSeriesType.Line">
+        <ChartSeries DataSource="@portfolioSteps" XName="Date" YName="Balance" Width="3" Fill="blue" Type="ChartSeriesType.Line">
             <ChartMarker>
                 <ChartDataLabel Visible="true"> </ChartDataLabel>
             </ChartMarker>

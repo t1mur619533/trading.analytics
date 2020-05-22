@@ -4,29 +4,17 @@ namespace Trading.Analytics.Server.Utils
 {
     public struct DateTimeWithZone
     {
-        private readonly DateTime utcDateTime;
-        private readonly TimeZoneInfo timeZone;
-
         public DateTimeWithZone(DateTime dateTime, TimeZoneInfo timeZone)
         {
             var dateTimeUnspec = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
-            utcDateTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, timeZone);
-            this.timeZone = timeZone;
+            UniversalTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, timeZone);
+            this.TimeZone = timeZone;
         }
 
-        public DateTime UniversalTime
-        {
-            get { return utcDateTime; }
-        }
+        public DateTime UniversalTime { get; }
 
-        public TimeZoneInfo TimeZone
-        {
-            get { return timeZone; }
-        }
+        public TimeZoneInfo TimeZone { get; }
 
-        public DateTime LocalTime
-        {
-            get { return TimeZoneInfo.ConvertTime(utcDateTime, timeZone); }
-        }
+        public DateTime LocalTime => TimeZoneInfo.ConvertTime(UniversalTime, TimeZone);
     }
 }

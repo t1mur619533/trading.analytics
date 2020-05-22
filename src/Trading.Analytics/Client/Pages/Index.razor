@@ -1,6 +1,8 @@
 ﻿@page "/"
+@using System.Net.Http.Headers
 @using Trading.Analytics.Shared
 @inject HttpClient Http
+@inject Endpoints Endpoints
 
 <h1>Активы</h1>
 
@@ -86,9 +88,10 @@
     {
         assets = await Http.GetJsonAsync<IEnumerable<Asset>>("api/Positions");
         var enumerable = assets.ToList();
-        portfolioSteps = await Http.GetJsonAsync<IEnumerable<PortfolioStep>>("api/PortfolioSteps");
         var o = await Http.GetJsonAsync<IEnumerable<Analytics.Shared.Models.Operations.Operation>>("api/Operations");
         operations = o.Where(operation => operation.OperationType.Equals("PayIn") && operation.Status.Equals("Done"));
+        var httpClient = new HttpClient {BaseAddress = new Uri(Endpoints.MonitoringBaseUri)};
+        portfolioSteps = await httpClient.GetJsonAsync<IEnumerable<PortfolioStep>>("api/PortfolioSteps");
     }
 
 }

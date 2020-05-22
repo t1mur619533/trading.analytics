@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Trading.Analytics.Domain;
-using Trading.Analytics.Server.Utils;
+using Trading.Analytics.Monitoring.Utils;
 using Trading.Analytics.Shared.Models;
 
-namespace Trading.Analytics.Server.Services
+namespace Trading.Analytics.Monitoring.Services
 {
     public class TradingSnapshotService : IInvocable
     {

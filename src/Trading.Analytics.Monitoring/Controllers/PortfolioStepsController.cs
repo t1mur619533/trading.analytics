@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Trading.Analytics.Domain;
 using Trading.Analytics.Shared;
 
-namespace Trading.Analytics.Server.Controllers
+namespace Trading.Analytics.Monitoring.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -23,9 +23,10 @@ namespace Trading.Analytics.Server.Controllers
         [HttpGet]
         public async Task<IEnumerable<PortfolioStep>> Get()
         {
-            return await context.PortfolioSnapshots
-                .Select(snapshot => new PortfolioStep {Date = snapshot.DateTime, Balance = Math.Round(snapshot.TotalPriceRub)})
+            var result = await context.PortfolioSnapshots
+                .Select(snapshot => new PortfolioStep { Date = snapshot.DateTime, Balance = Math.Round(snapshot.TotalPriceRub) })
                 .ToListAsync();
+            return result;
         }
     }
 }

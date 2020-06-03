@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Trading.Analytics.Server.Services;
+using Trading.Analytics.Services;
 using Trading.Analytics.Shared;
 using Trading.Analytics.Shared.Models;
 
@@ -14,9 +14,9 @@ namespace Trading.Analytics.Server.Controllers
     [ApiController]
     public class PositionsController : BaseController<Portfolio>
     {
-        private readonly CurrentRubPerUsdExchangeRateService exchangeRateService;
+        private readonly IExchangeRateService exchangeRateService;
 
-        public PositionsController(HttpClient httpClient, CurrentRubPerUsdExchangeRateService exchangeRateService, string endpoint = "portfolio") :
+        public PositionsController(HttpClient httpClient, IExchangeRateService exchangeRateService, string endpoint = "portfolio") :
             base(httpClient, endpoint)
         {
             this.exchangeRateService = exchangeRateService;
@@ -27,7 +27,7 @@ namespace Trading.Analytics.Server.Controllers
         {
             var result = await Get("");
             var assets = new List<Asset>();
-            var rubPerUsd = await exchangeRateService.LastHourClosingPrice();
+            var rubPerUsd = await exchangeRateService.GetDailyAveragePrice(DateTime.Now);
             assets.AddRange(result.Payload.Positions.Select(position =>
                 new Asset
                 {

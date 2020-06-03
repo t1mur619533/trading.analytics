@@ -58,7 +58,7 @@ namespace Trading.Analytics.Monitoring.Services
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var stringAsync = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var rubPerUsdEnvelope = JsonConvert.DeserializeObject<RubPerUsd>(stringAsync);
+                var rubPerUsdEnvelope = JsonConvert.DeserializeObject<Candles>(stringAsync);
                 if (rubPerUsdEnvelope.Payload.Candles.Any())
                 {
                     rubPerUsd = rubPerUsdEnvelope.Payload.Candles.First().C;

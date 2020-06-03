@@ -21,10 +21,13 @@ namespace Trading.Analytics.Monitoring.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<PortfolioStep>> Get()
+        public async Task<IEnumerable<PortfolioStep>> Get([FromQuery] int page = 0, [FromQuery] int count = 1000)
         {
             var result = await context.PortfolioSnapshots
-                .Select(snapshot => new PortfolioStep { Date = snapshot.DateTime, Balance = Math.Round(snapshot.TotalPriceRub) })
+                .Select(snapshot => new PortfolioStep
+                    {Date = snapshot.DateTime, Balance = Math.Round(snapshot.TotalPriceRub)})
+                .Skip(page * count)
+                .Take(count)
                 .ToListAsync();
             return result;
         }

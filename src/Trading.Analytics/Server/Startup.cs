@@ -1,13 +1,13 @@
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Trading.Analytics.Server.Services;
+using Trading.Analytics.Services;
 using Trading.Analytics.Shared;
 
 namespace Trading.Analytics.Server
@@ -25,18 +25,15 @@ namespace Trading.Analytics.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Endpoints>(Configuration);
             services.AddControllers();
-            services.AddScoped(provider =>
+            services.AddScoped<HttpClient>();
+            services.Configure<Endpoints>(Configuration);
+            services.AddScoped<IExchangeRateService, ExchangeRateService_BBG0013HGFT4>();
+            services.AddHttpClient<ITinkoffApiClient, TinkoffApiClient>(client =>
             {
-                var httpClient = new HttpClient
-                {
-                    BaseAddress = new Uri(Configuration["BaseUri"]),
-                };
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", Configuration["Token"]);
-                return httpClient;
+                client.BaseAddress = new Uri(Configuration["BaseUri"]);
             });
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -46,7 +43,6 @@ namespace Trading.Analytics.Server
                     Description = "API",
                 });
             });
-            services.AddScoped<CurrentRubPerUsdExchangeRateService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

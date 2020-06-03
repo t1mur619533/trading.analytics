@@ -1,0 +1,75 @@
+﻿@page "/"
+@using System.Net.Http.Headers
+@using Syncfusion.Blazor.Inputs
+@using Trading.Analytics.Shared
+@using ProgressEventArgs = Syncfusion.Blazor.SplitButtons.ProgressEventArgs
+@inject HttpClient Http
+@inject Endpoints Endpoints
+
+<h3>Анализ доходности</h3>
+<br />
+<div>
+    <SfTextBox Placeholder='Token' FloatLabelType='@FloatLabelType.Auto' @bind-Value="@token"></SfTextBox>
+    <p />
+    <SfProgressButton EnableProgress="true" Content="@Content" Duration="15000" CssClass="e-hide-spinner">
+        <ProgressButtonEvents OnBegin="Begin" Progressing="Progressing" OnEnd="End"></ProgressButtonEvents>
+    </SfProgressButton>
+    <SfButton @ref="ToggleBtn" @onclick="@OnToggleClick" CssClass="e-flat" IsToggle="true" IsPrimary="true" Content="@Content"></SfButton>
+</div>
+<br />
+<h6>Результат рассчитывается вычетанием из текущего баланса суммы всех поступлений на счет, покупок ценных бумаг с карты и дивидендов за вычетом всех коммиссий брокера и вывода средств. Расчет ведется в рублях, доллары конвертируются по стоимости на момент совершения операции. Ваш результат: </h6>
+<br />
+<h1 align="center">@Profit</h1>
+<SfChart Title="Portfolio Progress">
+    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime">
+    </ChartPrimaryXAxis>
+    <ChartLegendSettings Visible="true"> </ChartLegendSettings>
+    <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+    <ChartSeriesCollection>
+        <ChartSeries DataSource="@portfolioSteps" XName="Date" YName="Balance" Width="3" Fill="blue" Type="ChartSeriesType.Line">
+            <ChartMarker>
+                <ChartDataLabel Visible="true"> </ChartDataLabel>
+            </ChartMarker>
+        </ChartSeries>
+    </ChartSeriesCollection>
+</SfChart>
+<br />
+@code
+{
+    [Parameter]
+    public double Profit { get; set; }
+
+    SfButton ToggleBtn;
+    private string token;
+    private IEnumerable<PortfolioStep> portfolioSteps;
+    public string Content = "Start analyzing";
+
+    public void Begin(ProgressEventArgs args)
+    {
+        this.Content = "Progress " + args.Percent + '%';
+    }
+    public void Progressing(ProgressEventArgs args)
+    {
+        this.Content = "Progressing " + args.Percent + '%';
+        if (args.Percent == 40)
+        {
+            args.Percent = 90;
+        }
+    }
+    public void End(ProgressEventArgs args)
+    {
+        this.Content = "Progress" + args.Percent + '%';
+    }
+
+    private async Task OnToggleClick(MouseEventArgs args)
+    {
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        Profit = await Http.GetJsonAsync<double>("api/AnalyzePortfolio");
+    }
+
+    private async Task OnAnalyzingClick(MouseEventArgs args)
+    {
+
+    }
+
+}
